@@ -74,7 +74,7 @@ while 1:
 
 #    print(e)
 
-        if e<10:
+        if e < 10:
             print(bar[e])
 
 # output selection control structure, tuple addressing
