@@ -51,17 +51,14 @@ while 1:
             print('no data')
             time.sleep(900)
             j = r.get(u, timeout=10)
-#      sys.exit()
+        else:
+            t = j.json()['siteCurrentPowerFlow']['STORAGE']
 
-# STORAGE key in j.json()['siteCurrentPowerFlow']
-#    if 'STORAGE' in j.text:
-        t = j.json()['siteCurrentPowerFlow']['STORAGE']
-
-        c = int(t['chargeLevel'])
+            c = int(t['chargeLevel'])
 
 # output selection control structure, tuple addressing
 
-        graph.value = c/100
+            graph.value = c/100
 
         wait = 900
         while wait > 0:
