@@ -34,8 +34,13 @@ BAR_G5 = 10
 SE_SITE = 'nnnnnn'
 SE_AKEY = 'ALPHANUMERIC0123456789ABCEDFGHIJ'
 
-# SE_SITE = os.environ['SE_SITE']
+SE_SITE = os.environ.get('SE_SITE')
 # SE_AKEY = os.environ['SE_AKEY']
+SE_AKEY = os.environ.get('SE_AKEY')
+
+if SE_SITE == None or SE_AKEY == None:
+    print('Set SE_SITE and SE_AKEY variables')
+    sys.exit()
 
 # array/tuple pin layout
 graph = LEDBarGraph(26, 19, 13, 6, 5, 7, 8, 11, 25, 10, pwm=True)
