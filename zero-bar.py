@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from gpiozero import LEDBarGraph
+import os
 import requests
 import simplejson as json
 import sys
@@ -33,6 +34,9 @@ BAR_G5 = 10
 SE_SITE = 'nnnnnn'
 SE_AKEY = 'ALPHANUMERIC0123456789ABCEDFGHIJ'
 
+# SE_SITE = os.environ['SE_SITE']
+# SE_AKEY = os.environ['SE_AKEY']
+
 # array/tuple pin layout
 graph = LEDBarGraph(26, 19, 13, 6, 5, 7, 8, 11, 25, 10, pwm=True)
 
@@ -47,24 +51,40 @@ u += '/currentPowerFlow?api_key=' + SE_AKEY
 while 1:
     try:
         j = r.get(u, timeout=10)
-        if 'STORAGE' not in j.text:
+        while 'STORAGE' not in j.text:
+            print(j.text)
             print('no data')
-            time.sleep(900)
+            wait = 30
+            while wait > 0:
+                print(wait)
+                time.sleep(1)
+                wait -= 1
             j = r.get(u, timeout=10)
-        else:
-            t = j.json()['siteCurrentPowerFlow']['STORAGE']
+        t = j.json()['siteCurrentPowerFlow']['STORAGE']
 
-            c = int(t['chargeLevel'])
+        c = int(t['chargeLevel'])
 
 # output selection control structure, tuple addressing
 
-            graph.value = c/100
+        graph.value = c/100
 
         wait = 900
         while wait > 0:
-            print(wait)
-            time.sleep(1)
-            wait -= 1
+            try:
+                print(wait)
+                time.sleep(1)
+                wait -= 1
+            except KeyboardInterrupt:
+                graph.close()
+                sys.exit()
+    except requests.packages.urllib3.exceptions.NewConnectionError:
+        print('urk')
+    except requests.exceptions.ConnectionError:
+        print('-e-r-r-o-r-')
+    except requests.exceptions.ReadTimeout:
+        print('red tim out')
+    except requests.exceptions.ConnectTimeout:
+        print('con tim out')
     except ConnectionError:
         print('-error-')
     except ConnectionResetError:
